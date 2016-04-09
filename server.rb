@@ -1,3 +1,4 @@
+require './plugins'
 require 'json'
 require 'sinatra'
 
@@ -15,23 +16,15 @@ helpers do
   end
 
   def render page
-    html = [header(page['title'])]
-    page['story'].each do | item |
-      html << "<p>#{resolve item['text']||item['type']}</p>"
-    end
-    html.join "\n"
+    [ header(page['title']), story(page['story']) ].flatten.join "\n"
   end
 
   def header title
     "<h1><a href=\"/view/#{slug title}\"><img src=\"/favicon.png\" width=32></a> #{title}</h1>"
   end
 
-  def resolve text
-    text.gsub(/(\[\[(.*?)\]\])/) { | link | "<a href=\"/view/#{slug $2}\">#{$2}</a>"}
-  end
-
-  def slug title
-    title.gsub(/\s/,'-').gsub(/[^A-Za-z0-9-]/, '').downcase
+  def story items
+    items.map {| item | plugin item}
   end
 
   def cors
