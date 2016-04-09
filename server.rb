@@ -4,12 +4,10 @@ require 'sinatra'
 helpers do
 
   def show slug
-    begin
-      render JSON.parse File.read path slug
-    rescue
-      status 404
-      "File Not Found"
-    end
+    render JSON.parse File.read path slug
+  rescue
+    status 404
+    "File Not Found"
   end
 
   def path slug
